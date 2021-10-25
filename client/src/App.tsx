@@ -6,14 +6,20 @@ import {
 import ResetCss from './styles/reset-css';
 import GlobalStyles from './styles/global';
 import Routes from './pages/routes';
+import { SocketProvider } from './context/socket-context';
+import { UsersProvider } from './context/user-context';
 
 function App() {
   return (
-    <Router>
-      <ResetCss />
-      <GlobalStyles />
-      <Routes />
-    </Router>
+    <SocketProvider>
+      <UsersProvider>
+        <Router>
+          <ResetCss />
+          <GlobalStyles />
+          <Routes />
+        </Router>
+      </UsersProvider>
+    </SocketProvider>
   );
 }
 
