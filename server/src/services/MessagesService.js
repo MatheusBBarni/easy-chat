@@ -8,7 +8,6 @@ class MessagesService {
       ...message,
       createdAt: new Date()
     });
-    console.log(this.messages);
   }
 
   getAll() {
@@ -17,7 +16,7 @@ class MessagesService {
 
   filterBySenderAndReceiver(sender, receiver) {
     return this.messages.filter((message) => {
-      if (message.users.contains(sender) && message.users.contains(receiver)) {
+      if (message.users.includes(sender) && message.users.includes(receiver)) {
         return message;
       }
       return;

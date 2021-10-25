@@ -14,7 +14,6 @@ app.get('/', (req) => {
 });
 
 io.on('connection', (socket) => {
-  console.log('User connected');
   new ConnectionService(io, socket)
 })
 

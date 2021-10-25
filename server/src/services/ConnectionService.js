@@ -1,11 +1,12 @@
 const { 
   USERS,
   NEW_USER,
-  DISCONNECT, 
-  USER_DISCONNECTED,
+  DISCONNECT,
   ADD_MESSAGE,
-  GET_MESSAGES
+  GET_MESSAGES,
+  CHANGE_ROOM
 } = require("../util/actions");
+const generateRoomName = require("../util/generate-room-name");
 const MessagesService = require('./MessagesService');
 const UsersService = require("./UsersService");
 
@@ -16,9 +17,10 @@ class ConnectionService {
 
     socket.on(NEW_USER, (callback) => this.connectUser(callback));
     socket.on(DISCONNECT, () => this.disconnectUser());
-    socket.on(ADD_MESSAGE, (message) => this.addMessage(message));
-    socket.on(GET_MESSAGES, (receiver, sender) => this.getMessages(receiver, sender));
-    io.on('disconnect', (username) => this.disconnectUser(username))
+    socket.on(ADD_MESSAGE, (message, callback) => this.addMessage(message, callback));
+    socket.on(GET_MESSAGES, (receiver, callback) => this.getMessages(receiver, callback));
+    socket.on(CHANGE_ROOM, (receiver) => this.changeRoom(receiver));
+    io.on(DISCONNECT, (username) => this.disconnectUser(username));
   }
 
   connectUser(callback) {
@@ -34,13 +36,17 @@ class ConnectionService {
     this.io.emit(USERS, UsersService.getAll());
   }
 
-  addMessage(message) {
+  addMessage(message, callback) {
     MessagesService.add(message);
-    this.io.emit(`message-${this.socket.user}`, message);
+    callback(MessagesService.filterBySenderAndReceiver(message.receiver, this.socket.user));
   }
 
-  getMessages(receiver, sender) {
-    return MessagesService.filterBySenderAndReceiver(receiver, sender);
+  getMessages(receiver, callback) {
+    callback(MessagesService.filterBySenderAndReceiver(receiver, this.socket.user));
+  }
+
+  changeRoom(receiver) {
+    socket.join(generateRoomName(receiver, this.socket.user));
   }
 }
 
