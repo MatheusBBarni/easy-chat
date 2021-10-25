@@ -3,12 +3,14 @@ import { CaretRightSquareFill } from '@styled-icons/bootstrap/CaretRightSquareFi
 import { useEffect, useState } from 'react';
 import { useSocketContext } from '../../context/socket-context';
 import { useUsersContext } from '../../context/user-context';
+import { Actions } from '../../models/Actions';
 
 import * as S from './styles';
 
 const Home = () => {
   const socket = useSocketContext();
   const { users, setUsers } = useUsersContext();
+  const [user, setUser] = useState<string>('')
   const [message, setMessage] = useState<string>('')
   const [selectedUser, setSelectedUser] = useState<string>('');
 
@@ -16,6 +18,15 @@ const Home = () => {
     socket.on("users", users => {
       setUsers(users)
     })
+    socket.emit(Actions.NEW_USER, (user: string) => setUser(user))
+
+    window.addEventListener('beforeunload', () => {
+      socket.emit(Actions.DISCONNECT, user);
+    })
+
+    return () => {
+      socket.emit(Actions.DISCONNECT, user);
+    }
   }, [])
 
   const handleUserSelect = (userId: string) => {
@@ -30,7 +41,7 @@ const Home = () => {
     <S.Wrapper>
       <S.Title>Easy Chat</S.Title>
       <S.Label>Your ID</S.Label>
-      <S.Username>b5b43bb6-244a-459b-9100-b473f4e901b2</S.Username>
+      <S.Username>{user}</S.Username>
       <S.ChatWrapper>
         <S.UsersList>
           <p className="title">Users connected:</p>

@@ -4,7 +4,7 @@ import io, { Socket } from 'socket.io-client'
 export const SocketContext = React.createContext<Socket>(io())
 
 export const SocketProvider = ({ children }: { children: JSX.Element }) => {
-  const ENDPOINT = 'http://localhost:5000/';
+  const ENDPOINT = 'localhost:5000/';
   const socket = io(ENDPOINT, { transports: ['websocket', 'polling'] })
   return (
     <SocketContext.Provider value={socket}>
