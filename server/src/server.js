@@ -1,23 +1,24 @@
-const cors = require('cors');
-const express = require("express");
-const socket = require("socket.io");
+const app = require('express')()
+const http = require('http').createServer(app)
+const io = require('socket.io')(http)
+const cors = require('cors')
 
-const ConnectionService = require('./services/ConnectionService');
+const ConnectionService = require('./services/ConnectionService')
 
-const app = express();
-app.use(cors({
-  origin: '*',
-  methods: ['GET', 'POST']
-}))
+const PORT = process.env.PORT || 5000;
 
-const PORT = 3333;
+app.use(cors());
 
-const server = app.listen(PORT, function () {
-  console.log(`Listening on port ${PORT}`);
+app.get('/', (req) => {
+  req.send('Server is up and running')
 });
 
-const io = socket(server);
-
-io.on("connection", function (socket) {
+io.on('connection', (socket) => {
+  console.log('User connected');
   new ConnectionService(io, socket)
-});
+})
+
+http.listen(PORT, () => {
+  console.log(`Listening to ${PORT}`);
+})
+

@@ -14,26 +14,28 @@ class ConnectionService {
     this.io = io;
     this.socket = socket;
 
-    socket.on(NEW_USER, (username) => this.connectUser(username));
-    socket.on(DISCONNECT, (username) => this.disconnectUser(username));
-    socket.on(ADD_MESSAGE, (message, users) => this.addMessage(message, users));
+    socket.on(NEW_USER, (callback) => this.connectUser(callback));
+    socket.on(DISCONNECT, () => this.disconnectUser());
+    socket.on(ADD_MESSAGE, (message) => this.addMessage(message));
     socket.on(GET_MESSAGES, (receiver, sender) => this.getMessages(receiver, sender));
+    io.on('disconnect', (username) => this.disconnectUser(username))
   }
 
-  connectUser(username) {
-    UsersService.add(username);
-    this.socket.user = username;
+  connectUser(callback) {
+    const user = UsersService.add();
+    console.log(user);
+    this.socket.user = user;
+    this.io.emit(USERS, UsersService.getAll());
+    callback(user);
+  }
+
+  disconnectUser() {
+    UsersService.remove(this.socket.user);
     this.io.emit(USERS, UsersService.getAll());
   }
 
-  disconnectUser(username) {
-    UsersService.remove(username);
-    this.io.emit(USER_DISCONNECTED, username);
-    this.io.emit(USERS, UsersService.getAll());
-  }
-
-  addMessage(message, users) {
-    MessagesService.add({ ...message, users });
+  addMessage(message) {
+    MessagesService.add(message);
     this.io.emit(`message-${this.socket.user}`, message);
   }
 
@@ -42,4 +44,4 @@ class ConnectionService {
   }
 }
 
-module.export = ConnectionService
+module.exports = ConnectionService

@@ -2,11 +2,13 @@ const { uuid } = require('uuidv4');
 
 class UsersService {
   constructor() {
-    this.users = new Map();
+    this.users = new Set();
   }
 
-  add(user) {
-    this.users.set(user, uuid());
+  add() {
+    const user = uuid()
+    this.users.add(user);
+    return user
   }
 
   remove(user) {
