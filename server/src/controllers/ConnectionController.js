@@ -1,4 +1,4 @@
-const { 
+const {
   USERS,
   NEW_USER,
   DISCONNECT,
@@ -6,11 +6,10 @@ const {
   GET_MESSAGES,
   CHANGE_ROOM
 } = require("../util/actions");
-const generateRoomName = require("../util/generate-room-name");
-const MessagesService = require('./MessagesService');
-const UsersService = require("./UsersService");
+const MessagesService = require('../services/MessagesService');
+const UsersService = require("../services/UsersService");
 
-class ConnectionService {
+class ConnectionController {
   constructor(io, socket) {
     this.io = io;
     this.socket = socket;
@@ -18,14 +17,13 @@ class ConnectionService {
     socket.on(NEW_USER, (callback) => this.connectUser(callback));
     socket.on(DISCONNECT, () => this.disconnectUser());
     socket.on(ADD_MESSAGE, (message, callback) => this.addMessage(message, callback));
-    socket.on(GET_MESSAGES, (receiver, callback) => this.getMessages(receiver, callback));
+    socket.on(GET_MESSAGES, () => this.getMessages());
     socket.on(CHANGE_ROOM, (receiver) => this.changeRoom(receiver));
     io.on(DISCONNECT, (username) => this.disconnectUser(username));
   }
 
   connectUser(callback) {
     const user = UsersService.add();
-    console.log(user);
     this.socket.user = user;
     this.io.emit(USERS, UsersService.getAll());
     callback(user);
@@ -38,16 +36,18 @@ class ConnectionService {
 
   addMessage(message, callback) {
     MessagesService.add(message);
-    callback(MessagesService.filterBySenderAndReceiver(message.receiver, this.socket.user));
+    this.io.emit(GET_MESSAGES, MessagesService.getAll());
+    callback('ok');
   }
 
-  getMessages(receiver, callback) {
-    callback(MessagesService.filterBySenderAndReceiver(receiver, this.socket.user));
+  getMessages() {
+    this.io.emit(GET_MESSAGES, MessagesService.getAll());
   }
 
   changeRoom(receiver) {
-    socket.join(generateRoomName(receiver, this.socket.user));
+    this.socket.receiver = receiver
+    this.io.emit(GET_MESSAGES, MessagesService.getAll());
   }
 }
 
-module.exports = ConnectionService
+module.exports = ConnectionController

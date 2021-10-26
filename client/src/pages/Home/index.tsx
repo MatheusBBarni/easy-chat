@@ -14,7 +14,10 @@ const Home = () => {
   const [selectedUser, setSelectedUser] = useState<string>('');
 
   useEffect(() => {
-    socket.on("users", users => {
+    socket.on("users", (users: string[]) => {
+      if (!users.includes(selectedUser)) {
+        setSelectedUser('')
+      }
       setUsers(users)
     })
     socket.emit(Actions.NEW_USER, (user: string) => setLoggedUser(user))
@@ -34,6 +37,7 @@ const Home = () => {
 
   const handleUserSelect = (userId: string) => {
     setSelectedUser(userId);
+    socket.emit(Actions.CHANGE_ROOM, userId);
   }
 
   return (

@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import { useEffect, useState } from 'react';
 import ScrollToBottom from 'react-scroll-to-bottom';
 import { CaretRightSquareFill } from '@styled-icons/bootstrap/CaretRightSquareFill';
@@ -19,48 +20,70 @@ const ChatForm = ({ userSelected }: ChatFormProps) => {
   const [messages, setMessages] = useState<Message[]>([]);
   const [messageValue, setMessageValue] = useState<string>('');
 
+  const isUserSelected = userSelected !== '';
+
   useEffect(() => {
-    if(userSelected) {
-      socket.emit(Actions.GET_MESSAGES, userSelected, (chatMessages: Message[]) => setMessages(chatMessages))
-    }
-  }, [userSelected, socket])
+    socket.emit(Actions.GET_MESSAGES, 'ok');
+    socket.on(Actions.GET_MESSAGES, (chatMessages: Message[]) => {
+      setMessages(chatMessages);
+    });
+  }, []);
 
   const handleSendMessage = () => {
-    const message = {
-      value: messageValue,
-      receiver: userSelected,
-      sender: loggedUser,
-      users: [
-        userSelected,
-        loggedUser
-      ]
-    }    
-    socket.emit(Actions.ADD_MESSAGE, message, (chatMessages: Message[]) => setMessages(chatMessages));
+    if (messageValue !== '') {
+      const message = {
+        value: messageValue,
+        receiver: userSelected,
+        sender: loggedUser,
+        users: [
+          userSelected,
+          loggedUser
+        ]
+      }
+
+      socket.emit(Actions.ADD_MESSAGE, message, (status: string) => {
+        if (status === 'ok') {
+          setMessageValue('')
+        }
+      });
+    }
   }
 
   return (
-    <S.ChatForm>
+    <S.ChatForm disabled={!isUserSelected}>
       <ScrollToBottom className="messages" scrollViewClassName="scroll-view" debug={false}>
-        {messages.length > 0 ? 
-          messages.map((message, index) => (
-            <MessageCard key={index} message={message} />
-          )) 
-          : <p>No messages yet!</p>}
+        {(messages.length > 0 && isUserSelected) ?
+          messages
+            .sort((messageA, messageB) => {
+              return new Date(messageA.createdAt).getTime() - new Date(messageB.createdAt).getTime()
+            })
+            .map((message, index) => {
+              if (
+                (message.users.includes(loggedUser) && message.users.includes(userSelected))
+                && isUserSelected
+              ) {
+                return (
+                  <MessageCard key={index} message={message} />
+                )
+              }
+              return null
+            })
+          : <S.NoMessagesText>No messages yet!</S.NoMessagesText>}
       </ScrollToBottom>
       <div className="chat-control">
-        <textarea 
-          name="message" 
-          id="message" 
+        <textarea
+          name="message"
+          id="message"
           rows={2}
-          placeholder="Type here your message..."
           value={messageValue}
-          onChange={(event) => setMessageValue(event.target.value)} 
+          disabled={!isUserSelected}
+          onChange={(event) => setMessageValue(event.target.value)}
+          placeholder={isUserSelected ? 'Type here your message...' : 'Please select a user...'}
         />
-        <CaretRightSquareFill 
+        <CaretRightSquareFill
           title="Send message"
-          size={50} 
-          color="var(--black)" 
-          cursor="pointer" 
+          size={50}
+          color="var(--black)"
           onClick={handleSendMessage}
         />
       </div>

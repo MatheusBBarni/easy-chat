@@ -14,6 +14,7 @@ const MessageCard = ({
     createdAt
   }
 }: MessageCardProps) => {
+
   const { loggedUser } = useUsersContext();
 
   return (
@@ -23,8 +24,8 @@ const MessageCard = ({
           {sender === loggedUser ? 'You' : 'Person'}
         </S.CardOwner>
         <S.CardDate>
-          {format(createdAt, 'MM/dd/yyyy')}{' '}
-          {format(createdAt, 'HH:mm')}
+          {format(new Date(createdAt), 'MM/dd/yyyy')}{' '}
+          {format(new Date(createdAt), 'HH:mm')}
         </S.CardDate>
       </S.CardHeader>
       <S.CardMessage>

@@ -1,4 +1,4 @@
-const { uuid } = require('uuidv4');
+const { v4 } = require('uuid')
 
 class UsersService {
   constructor() {
@@ -6,7 +6,7 @@ class UsersService {
   }
 
   add() {
-    const user = uuid()
+    const user = v4()
     this.users.add(user);
     return user
   }

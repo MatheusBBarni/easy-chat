@@ -4,6 +4,9 @@ export const Wrapper = styled.div`
   width: 100%;
   height: 100vh;
   padding: 10px 20px;
+  @media(max-width: 900px) {
+    padding: 5px;
+  }
 `;
 
 export const Title = styled.h1`
@@ -32,6 +35,9 @@ export const Username = styled.h2`
   justify-content: center;
   align-items: center;
   margin-bottom: 15px;
+  @media(max-width: 900px) {
+    width: 200px;
+  }
 `
 
 export const Content = styled.div`
@@ -50,6 +56,13 @@ export const UsersList = styled.div`
     font-size: 16px;
     font-weight: 700;
     margin-bottom: 15px;
+    @media(max-width: 900px) {
+      font-size: 12px;
+    }
+  }
+
+  @media(max-width: 900px) {
+    width: 28%;
   }
 `
 
@@ -61,8 +74,14 @@ export const User = styled.p<{ isSelected: boolean }>`
   line-height: 20px;
   cursor: pointer;
   font-weight: ${({ isSelected = false }) => isSelected ? '700' : '400'};
+  @media(max-width: 900px) {
+    font-size: 12px;
+  }
 `
 
 export const ChatWrapper = styled.div`
   width: 80%;
+  @media(max-width: 900px) {
+    width: 70%;
+  }
 `

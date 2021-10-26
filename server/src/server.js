@@ -3,7 +3,7 @@ const http = require('http').createServer(app)
 const io = require('socket.io')(http)
 const cors = require('cors')
 
-const ConnectionService = require('./services/ConnectionService')
+const ConnectionController = require('./controllers/ConnectionController')
 
 const PORT = process.env.PORT || 5000;
 
@@ -14,7 +14,7 @@ app.get('/', (req) => {
 });
 
 io.on('connection', (socket) => {
-  new ConnectionService(io, socket)
+  new ConnectionController(io, socket)
 })
 
 http.listen(PORT, () => {

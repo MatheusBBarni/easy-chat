@@ -2,6 +2,7 @@ import styled from "styled-components";
 
 export const Card = styled.div`
   width: 100%;
+  min-height: 100px;
   border: 1px solid var(--pink);
   border-radius: 8px;
   margin-top: 10px;
@@ -35,4 +36,5 @@ export const CardMessage = styled.p`
   font-size: 16px;
   font-family: var(--font);
   font-weight: 700;
+  word-break: break-word;
 `

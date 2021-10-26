@@ -6,21 +6,12 @@ class MessagesService {
   add(message) {
     this.messages.push({
       ...message,
-      createdAt: new Date()
+      createdAt: new Date().toString()
     });
   }
 
   getAll() {
     return this.messages;
-  }
-
-  filterBySenderAndReceiver(sender, receiver) {
-    return this.messages.filter((message) => {
-      if (message.users.includes(sender) && message.users.includes(receiver)) {
-        return message;
-      }
-      return;
-    })
   }
 }
 
