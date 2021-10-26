@@ -1,7 +1,7 @@
 # Easy Chat - Project for a company based in Oslo
 
 ## Idea
-with the question that always comes up, google and facebook have a lot of our data, I had the idea of doing an anonymous chat, where the person enters without a name and the app gives the name to them, and with that he can send messages for others users anonymously.
+With the question that always comes up, google and facebook have a lot of our data, I had the idea of doing an anonymous chat, where the person enters without a name and the app gives the name to them, and with that he can send messages for others users anonymously.
 
 ## How to run the project
 
