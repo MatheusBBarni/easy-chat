@@ -9,6 +9,7 @@ import { Message } from '../../models/Message';
 import MessageCard from '../MessageCard';
 import { useUsersContext } from '../../context/user-context';
 import { Actions } from '../../models/Actions';
+import useLocalstorage from '../../hooks/useLocalstorage';
 
 export type ChatFormProps = {
   userSelected: string
@@ -18,7 +19,7 @@ const ChatForm = ({ userSelected }: ChatFormProps) => {
   const socket = useSocketContext();
   const { loggedUser } = useUsersContext();
   const [messages, setMessages] = useState<Message[]>([]);
-  const [messageValue, setMessageValue] = useState<string>('');
+  const [messageValue, setMessageValue] = useLocalstorage<string>(userSelected, '');
 
   const isUserSelected = userSelected !== '';
 

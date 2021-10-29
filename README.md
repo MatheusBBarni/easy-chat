@@ -1,4 +1,4 @@
-# Easy Chat - Project for a company based in Oslo
+# Easy Chat
 
 First you need to install all deps on client and server with `yarn` or `npm install`.
 

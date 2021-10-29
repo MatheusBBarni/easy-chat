@@ -14,7 +14,7 @@ const Home = () => {
   const [selectedUser, setSelectedUser] = useState<string>('');
 
   useEffect(() => {
-    socket.on("users", (users: string[]) => {
+    socket.on(Actions.USERS, (users: string[]) => {
       if (!users.includes(selectedUser)) {
         setSelectedUser('')
       }

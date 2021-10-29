@@ -1,4 +1,5 @@
 import { format } from 'date-fns';
+import { useState } from 'react';
 import { useUsersContext } from '../../context/user-context';
 import { Message } from '../../models/Message';
 import * as S from './styles';
@@ -14,14 +15,14 @@ const MessageCard = ({
     createdAt
   }
 }: MessageCardProps) => {
-
   const { loggedUser } = useUsersContext();
+  const [isUserMessage] = useState<boolean>(sender === loggedUser);
 
   return (
-    <S.Card>
+    <S.Card isUserMessage={isUserMessage}>
       <S.CardHeader>
         <S.CardOwner>
-          {sender === loggedUser ? 'You' : 'Person'}
+          {isUserMessage ? 'You' : 'Person'}
         </S.CardOwner>
         <S.CardDate>
           {format(new Date(createdAt), 'MM/dd/yyyy')}{' '}
